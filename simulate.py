@@ -7,6 +7,7 @@ from models import ESP,UE
 import time
 import json
 from paho.mqtt import client as mqtt_client
+from argparse import ArgumentParser
 
 def connect_mqtt(broker,port):
     def on_connect(client, userdata, flags, rc):
@@ -101,14 +102,34 @@ def main(espnum,outputmode,uenum,timestep,simlen):
 
     if outputmode[0] == "json":
         with open(outputmode[1],"w") as outfile:
-            json.dump(jsondata,outfile)
+            json.dump({
+                "esps": {e.name: e.pos for e in esplist},
+                "data": jsondata
+            },outfile)
+
 
 if __name__ == "__main__":
+    parser: ArgumentParser = ArgumentParser()
+    parser.add_argument("--esp", type=int, default=5, help="Number of sniffers")
+    parser.add_argument("--ue", type=int, default=50, help="Number of user devices")
+    parser.add_argument("--step", type=int, default=5, help="Time per step (secs)")
+    parser.add_argument("--len", type=int, default=600, help="Number of seconds to simulate")
+    parser.add_argument("--mode", type=str, default="json", help="Mode to output data in (any of json, mqtt, print)")
+    parser.add_argument("--jsonpath", type=str, default="test.json", help="File path for JSON mode")
+    parser.add_argument("--mqttbroker", type=str, default="localhost", help="IP for MQTT broker")
+    parser.add_argument("--mqttport", type=int, default=1883, help="Port for MQTT broker")
+    parser.add_argument("--mqtttopic", type=str, default="imaginerit", help="Topic for MQTT broker")
+    args = parser.parse_args()
 
-    espnum = 5   # number of sniffers
-    uenum = 50   # number of user devices
-    timestep = 5 # sec
-    simlen = 600 # sec
-    outputmode = "print"#("mqtt","localhost",1883,"imaginerit") # (print), (mqtt,broker,port,topic), (json,filename)
+    espnum = args.esp
+    uenum = args.ue
+    timestep = args.step
+    simlen = args.len
+    if args.mode == "print":
+        omode = ("print")
+    elif args.mode == "json":
+        omode = ("json", args.jsonpath)
+    else:
+        omode = ("mqtt", args.mqttbroker, args.mqttport, args.mqtttopic)
 
-    main(espnum,outputmode,uenum,timestep,simlen)
+    main(espnum,omode,uenum,timestep,simlen)

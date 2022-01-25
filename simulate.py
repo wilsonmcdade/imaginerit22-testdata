@@ -101,7 +101,11 @@ def main(espnum,outputmode,uenum,timestep,simlen):
 
     if outputmode[0] == "json":
         with open(outputmode[1],"w") as outfile:
-            json.dump(jsondata,outfile)
+            json.dump({
+                "esps": {e.name: e.pos for e in esplist},
+                "data": jsondata
+            },outfile)
+
 
 if __name__ == "__main__":
 
@@ -109,6 +113,6 @@ if __name__ == "__main__":
     uenum = 50   # number of user devices
     timestep = 5 # sec
     simlen = 600 # sec
-    outputmode = "print"#("mqtt","localhost",1883,"imaginerit") # (print), (mqtt,broker,port,topic), (json,filename)
+    outputmode = ("json", "out.json")#("mqtt","localhost",1883,"imaginerit") # (print), (mqtt,broker,port,topic), (json,filename)
 
     main(espnum,outputmode,uenum,timestep,simlen)

@@ -13,7 +13,7 @@ uelist = []
 class ESP:
     def __init__(self,name,outputmode,espnum):
         self.name = name
-        self.pos = (FIELDSIZE/int(name[3:]),FIELDSIZE/int(name[3:]))
+        self.pos = (random.randint(16, FIELDSIZE - 16),random.randint(16, FIELDSIZE - 16))
         self.outputmode = outputmode
 
         print("Created ESP #{} name: {}, pos: {}".format(name[3:],name,self.pos))

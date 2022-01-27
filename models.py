@@ -4,6 +4,7 @@ Wilson McDade
 """
 
 import randmac
+import math
 import random
 
 FIELDSIZE = 600
@@ -25,14 +26,14 @@ class ESP:
             uepos = ue.get_pos()
             uedist = self.get_distance(uepos)
 
-            if uedist < 100:
+            if uedist < 30:
                 uename, uemac = ue.get_identifiers()
 
                 returnable.append({    
                             "uename":   uename,
                             "macaddr":  uemac,
-                            "rssi":     round(self.get_RSSI(uedist),4),
-                            "dist":     round(self.get_distance(ue.get_pos()),4),
+                            "rssi":     round(self.get_RSSI(uedist),3),
+                            "dist":     round(self.get_distance(ue.get_pos()),3),
                             "pos":      ue.get_pos()})
 
         return returnable
@@ -41,10 +42,23 @@ class ESP:
         return ((uepos[0]-self.pos[0])**2 + (uepos[1]-self.pos[1])**2)**0.5
 
     def get_RSSI(self,distance):
-        if distance < 80:
-            return (distance/100)*80
+        if distance < 25:
+
+            """
+            distance -> rssi conversion found here:
+                https://www.ijcaonline.org/research/volume137/number13/jayakody-2016-ijca-909028.pdf
+
+            -(10n*log(d)+A) where:
+                n is path-loss exponent (usually between 1.7-3.0 for indoor spaces
+                d is distance
+                A is RSSI value at 1 meter reference distance -- estimated to be 50
+                    from this experiment:
+                    https://github.com/neXenio/BLE-Indoor-Positioning/wiki/RSSI-Measurements
+            """
+
+            return -((10*(random.uniform(1.7,2))*math.log(distance,10))+(50))
         else:
-            return 80.0001
+            return 80.001
 
 class UE:
     def __init__(self, name):

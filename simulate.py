@@ -93,7 +93,7 @@ def main(espnum,outputmode,uenum,timestep,simlen):
                                     data[ue]["dist"],
                                     data[ue]["pos"]))
                 else: 
-                    print(" {}\t| {}\t".format(time.time(),esp.name))
+                    print(" {}\t| {}\t".format(round(time.time(),0),esp.name))
 
         elapsed += timestep
         if outputmode[0] != "json":

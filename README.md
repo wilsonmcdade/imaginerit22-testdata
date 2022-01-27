@@ -3,6 +3,25 @@ Fake data generator for imagine rit backend/frontend teams
 
 ## How to use
 
+```
+usage: simulate.py [-h] [--esp ESP] [--ue UE] [--step STEP] [--len LEN] [--mode MODE] [--jsonpath JSONPATH]
+                   [--mqttbroker MQTTBROKER] [--mqttport MQTTPORT] [--mqtttopic MQTTTOPIC]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --esp ESP             Number of sniffers
+  --ue UE               Number of user devices
+  --step STEP           Time per step (secs)
+  --len LEN             Number of seconds to simulate
+  --mode MODE           Mode to output data in (any of json, mqtt, print)
+  --jsonpath JSONPATH   File path for JSON mode
+  --mqttbroker MQTTBROKER
+                        IP for MQTT broker
+  --mqttport MQTTPORT   Port for MQTT broker
+  --mqtttopic MQTTTOPIC
+                        Topic for MQTT broker
+```
+
 1. Clone
 ```
 git clone git@github.com:wilsonmcdade/imaginerit22-testdata.git
@@ -23,26 +42,12 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-5. Edit simulate.py to your preferred output method
-
-This can be one of the following:
-
-Live print
-```
-"print"
-```
-
-Live MQTT Stream
-```
-("mqtt","broker","port","topic")
-```
-
-Quicksim json output
-```
-("json",filename)
-```
-
-6. Run simulate.py
+5. Run simulate.py (with defaults)
 ```
 python3 simulate.py
+```
+
+Run simulation sending to local mqtt broker
+```
+python3 simulate.py --mode mqtt --mqttbroker localhost --mqtttopic footsniffer
 ```
